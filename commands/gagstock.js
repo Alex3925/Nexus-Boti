@@ -1,5 +1,4 @@
 const axios = require("axios");
-const { ensureDbEntities } = require("nexus-core/dbSync"); // Import ensureDbEntities
 const { convertTime } = require("nexus-core/utils"); // Import convertTime (adjust path if needed)
 
 const activeSessions = new Map();
@@ -13,9 +12,6 @@ module.exports = {
   },
   run: async function ({ api, event, args }) {
     try {
-      // Ensure user and thread exist in the database
-      await ensureDbEntities(api, event);
-
       const action = args[0]?.toLowerCase();
       const senderID = event.senderID;
       const threadID = event.threadID;
@@ -132,9 +128,9 @@ module.exports = {
           const message = `🌾 𝗚𝗿𝗼𝘄 𝗔 𝗚𝗮𝗿𝗱𝗲𝗻 — 𝗧𝗿𝗮𝗰𝗸𝗲𝗿\n\n` +
             `🛠️ 𝗚𝗲𝗮𝗿:\n${gearList}\n\n` +
             `🌱 𝗦𝗲𝗲𝗱𝘀:\n${seedList}\n\n` +
-            `🥚 𝗘𝗴𝗴𝘀:\n${eggList}\n\n` +
+            `🥚 �_E𝗴𝗴𝘀:\n${eggList}\n\n` +
             `🎨 𝗖𝗼𝘀𝗺𝗲𝘁𝗶𝗰𝘀:\n${cosmeticsList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${cosmeticsRestock}\n\n` +
-            `🍯 𝗛𝗼𝗻𝗲𝘆 𝗦𝘁𝗼𝗰𝗸:\n${honeyList}\n⏳ �_R𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${honeyRestock}\n\n` +
+            `🍯 𝗛𝗼𝗻𝗲𝘆 𝗦𝘁𝗼𝗰𝗸:\n${honeyList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${honeyRestock}\n\n` +
             `🌤️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿: ${weatherText}\n🪴 𝗖𝗿𝗼𝗽 𝗕𝗼𝗻𝘂𝘀: ${cropBonus}\n\n` +
             `📅 𝗚𝗲𝗮𝗿/𝗦𝗲𝗲𝗱 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${gearRestock}\n` +
             `📅 𝗘𝗴𝗴 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${eggRestock}`;
