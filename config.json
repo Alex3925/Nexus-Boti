@@ -1,12 +1,12 @@
 {
   "botConfig": {
-    "name": "NexusBot",
+    "name": "AlexBOT",
     "version": "1.2.0",
-    "prefix": "!",
+    "prefix": "/",
     "language": "en",
     "timezone": "UTC",
     "logLevel": "info",
-    "owner": "100036117980682",
+    "owner": "100085861488156",
     "admins": []
   },
   "systemConfig": {
