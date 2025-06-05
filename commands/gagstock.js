@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { ensureDbEntities } = require("nexus-core/dbSync"); // Import ensureDbEntities
 
 const activeSessions = new Map();
 
@@ -131,11 +132,11 @@ module.exports = {
             `🛠️ 𝗚𝗲𝗮𝗿:\n${gearList}\n\n` +
             `🌱 𝗦𝗲𝗲𝗱𝘀:\n${seedList}\n\n` +
             `🥚 𝗘𝗴𝗴𝘀:\n${eggList}\n\n` +
-            `🎨 𝗖𝗼𝘀𝗺𝗲𝘁𝗶𝗰𝘀:\n${cosmeticsList}\n⏳ �_R𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${cosmeticsRestock}\n\n` +
-            `🍯 𝗛𝗼𝗻𝗲𝘆 𝗦𝘁𝗼𝗰𝗸:\n${honeyList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 �𝗶𝗻: ${honeyRestock}\n\n` +
+            `🎨 𝗖𝗼𝘀𝗺𝗲𝘁𝗶𝗰𝘀:\n${cosmeticsList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${cosmeticsRestock}\n\n` +
+            `🍯 𝗛𝗼𝗻𝗲𝘆 𝗦𝘁𝗼𝗰𝗸:\n${honeyList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${honeyRestock}\n\n` +
             `🌤️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿: ${weatherText}\n🪴 𝗖𝗿𝗼𝗽 𝗕𝗼𝗻𝘂𝘀: ${cropBonus}\n\n` +
-            `📅 �_G𝗲𝗮𝗿/𝗦𝗲𝗲𝗱 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${gearRestock}\n` +
-            `📅 𝗘𝗴𝗴 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 �𝗶𝗻: ${eggRestock}`;
+            `📅 𝗚𝗲𝗮𝗿/𝗦𝗲𝗲𝗱 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${gearRestock}\n` +
+            `📅 𝗘𝗴𝗴 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${eggRestock}`;
 
           if (message !== sessionData.lastMessage) {
             sessionData.lastMessage = message;
