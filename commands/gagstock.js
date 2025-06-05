@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { ensureDbEntities } = require('nexus-core/dbSync.js'); // Adjust path if needed
+const { ensureDbEntities } = require("../nexus-core/dbSync"); // Corrected path
 
 const activeSessions = new Map();
 
@@ -13,7 +13,12 @@ module.exports = {
 
   run: async function ({ api, event }) {
     // Ensure user exists in the database
-    await ensureDbEntities(api, event);
+    try {
+      await ensureDbEntities(api, event);
+    } catch (error) {
+      console.error(`❌ Failed to sync database for user ${event.senderID}:`, error.message);
+      api.sendMessage("⚠️ Error initializing database. Tracking may still work.", event.threadID);
+    }
 
     const action = event.body.split(" ")[1]?.toLowerCase();
     const threadID = event.threadID;
@@ -54,7 +59,7 @@ module.exports = {
       const h = Math.floor(seconds / 3600);
       const m = Math.floor((seconds % 3600) / 60);
       const s = seconds % 60;
-      return `${h > 0 ? `${h}h ` : ''}${m}m ${s}s`;
+      return `${h > 0 ? `${h}h ` : ""}${m}m ${s}s`;
     };
 
     const getHoneyRestockCountdown = () => {
@@ -139,13 +144,13 @@ module.exports = {
         const cropBonus = weather.cropBonuses || "None";
         const weatherText = `${weatherIcon} ${weatherCurrent}`;
 
-        const message = `🌾 𝗚𝗿𝗼𝘄 𝗔 𝗚𝗮𝗿𝗱𝗲𝗻 — 𝗧𝗿𝗮𝗰𝗸𝗲𝗿\n\n` +
+        const message = `🌾 𝗚𝗿𝗼𝘄 𝗔 𝗚𝗮𝗿𝗱𝗲𝗻 — 𝗧�_r𝗮𝗰𝗸𝗲𝗿\n\n` +
           `🛠️ 𝗚𝗲𝗮𝗿:\n${gearList}\n\n` +
-          `🌱 𝗦𝗲𝗲𝗱𝘀:\n${seedList}\n\n` +
+          `🌱 𝗦𝗲𝗲�_d Ascendancyd𝘀:\n${seedList}\n\n` +
           `🥚 𝗘𝗴𝗴𝘀:\n${eggList}\n\n` +
           `🎨 𝗖𝗼𝘀𝗺𝗲𝘁𝗶𝗰𝘀:\n${cosmeticsList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${cosmeticsRestock}\n\n` +
-          `🍯 𝗛𝗼𝗻𝗲𝘆 𝗦𝘁𝗼𝗰𝗸:\n${honeyList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${honeyRestock}\n\n` +
-          `🌤️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿: ${weatherText}\n🪴 �_C𝗿𝗼𝗽 𝗕𝗼𝗻𝘂𝘀: ${cropBonus}\n\n` +
+          `🍯 �_H𝗼𝗻𝗲𝘆 𝗦𝘁𝗼𝗰𝗸:\n${honeyList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${honeyRestock}\n\n` +
+          `🌤️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿: ${weatherText}\n🪴 𝗖𝗿𝗼𝗽 𝗕𝗼𝗻𝘂𝘀: ${cropBonus}\n\n` +
           `📅 𝗚𝗲𝗮𝗿/𝗦𝗲𝗲𝗱 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${gearRestock}\n` +
           `📅 𝗘𝗴𝗴 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${eggRestock}`;
 
