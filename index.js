@@ -1,3 +1,26 @@
+// Minimal HTTP server for Render.com health checks
+const http = require('http');
+const PORT = process.env.PORT || 3000;
+
+const server = http.createServer((req, res) => {
+  if (req.url === '/health') {
+    res.writeHead(200);
+    res.end('Nexus-Bot running');
+  } else {
+    res.writeHead(404);
+    res.end('Not found');
+  }
+});
+
+server.on('error', (error) => {
+  logger.error(`HTTP server error: ${error.message}`);
+});
+
+server.listen(PORT, '0.0.0.0', () => {
+  logger.info(startupGradient(`Health check web server running on port ${PORT}`));
+});
+
+// ...existing code
 const nexusFca = require('nexus-fca');
 const auth = require('./nexus-core/auth');
 const logger = require('./nexus-core/logger');
@@ -179,8 +202,8 @@ async function initBot() {
 
     // 6. Initialize safety limiters and rate limits
     logPhase(BOOT_PHASES.SYSTEM, 'Setting up safety limits...');
-    global.messageRateLimit = new Map();
-    global.commandCooldowns = new Map();
+    global.messageRateLimit = global.messageRateLimit || new Map();
+    global.commandCooldowns = global.commandCooldowns || new Map();
 
     // Initialize global handlers
     global.client = {
@@ -233,7 +256,7 @@ async function initBot() {
         // Load from database if it was initialized successfully
         await InitSystem.initialize();
       } else {
-        // Fall back to loading from JSON files
+        // Fall back to loading since JSON files
         await InitSystem.initializeFromFiles();
       }
       
@@ -389,10 +412,18 @@ async function cleanup() {
     // Clean up database connections
     if (global.db) await global.db.close();
     
-    // Save any pending data
+   robot
+
+// Save any pending data
     if (global.threadPrefixes) {
       // Save thread prefixes
       await saveThreadPrefixes();
+    }
+    
+    // Close HTTP server
+    if (server) {
+      await new Promise((resolve) => server.close(resolve));
+      logger.info('HTTP server closed');
     }
     
     logger.info('Cleanup completed successfully');
