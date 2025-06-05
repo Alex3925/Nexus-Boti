@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { ensureDbEntities } = require('nexus-core/dbSync.js'); // Adjust path if needed
 
 const activeSessions = new Map();
 
@@ -10,9 +11,9 @@ module.exports = {
     role: 0 // Accessible to everyone
   },
 
-  run: async function ({ api, event, utils }) {
-    // Ensure user and thread exist in the database
-    await utils.ensureDbEntities(api, event);
+  run: async function ({ api, event }) {
+    // Ensure user exists in the database
+    await ensureDbEntities(api, event);
 
     const action = event.body.split(" ")[1]?.toLowerCase();
     const threadID = event.threadID;
@@ -48,6 +49,14 @@ module.exports = {
       threadID
     );
 
+    const convertTime = (ms) => {
+      const seconds = Math.floor(ms / 1000);
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      return `${h > 0 ? `${h}h ` : ''}${m}m ${s}s`;
+    };
+
     const getHoneyRestockCountdown = () => {
       const nowPH = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }));
       const currentMinutes = nowPH.getMinutes();
@@ -55,7 +64,15 @@ module.exports = {
       const remainingMinutes = 59 - currentMinutes;
       const remainingSeconds = 60 - currentSeconds;
       const totalSeconds = remainingMinutes * 60 + remainingSeconds;
-      return utils.convertTime(totalSeconds * 1000); // Use Nexus Bot's convertTime utility
+      return convertTime(totalSeconds * 1000);
+    };
+
+    const normalizeString = (str) => {
+      return str
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
     };
 
     const sessionData = {
@@ -101,15 +118,15 @@ module.exports = {
         if (combinedKey === sessionData.lastCombinedKey) return;
         sessionData.lastCombinedKey = combinedKey;
 
-        const gearRestock = utils.convertTime((300 - Math.floor((Date.now() - gearSeed.updatedAt) / 1000)) * 1000);
-        const eggRestock = utils.convertTime((600 - Math.floor((Date.now() - egg.updatedAt) / 1000)) * 1000);
-        const cosmeticsRestock = utils.convertTime((14400 - Math.floor((Date.now() - cosmetics.updatedAt) / 1000)) * 1000);
+        const gearRestock = convertTime((300 - Math.floor((Date.now() - gearSeed.updatedAt) / 1000)) * 1000);
+        const eggRestock = convertTime((600 - Math.floor((Date.now() - egg.updatedAt) / 1000)) * 1000);
+        const cosmeticsRestock = convertTime((14400 - Math.floor((Date.now() - cosmetics.updatedAt) / 1000)) * 1000);
         const honeyRestock = getHoneyRestockCountdown();
 
         const gearList = gearSeed.gear?.map((item) => `- ${item}`).join("\n") || "No gear.";
         const seedList = gearSeed.seeds?.map((seed) => {
           const name = seed.split(" **")[0];
-          const matched = emojiSeeds.find((s) => utils.normalizeString(s.name) === utils.normalizeString(name));
+          const matched = emojiSeeds.find((s) => normalizeString(s.name) === normalizeString(name));
           const emoji = matched?.emoji || "";
           return `- ${emoji ? `${emoji} ` : ""}${seed}`;
         }).join("\n") || "No seeds.";
@@ -127,10 +144,10 @@ module.exports = {
           `🌱 𝗦𝗲𝗲𝗱𝘀:\n${seedList}\n\n` +
           `🥚 𝗘𝗴𝗴𝘀:\n${eggList}\n\n` +
           `🎨 𝗖𝗼𝘀𝗺𝗲𝘁𝗶𝗰𝘀:\n${cosmeticsList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${cosmeticsRestock}\n\n` +
-          `🍯 𝗛𝗼𝗻𝗲𝘆 𝗦𝘁𝗼𝗰𝗸:\n${honeyList}\n⏳ �_R𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${honeyRestock}\n\n` +
-          `🌤️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿: ${weatherText}\n🪴 𝗖𝗿𝗼𝗽 𝗕𝗼𝗻𝘂𝘀: ${cropBonus}\n\n` +
-          `📅 𝗚𝗲𝗮𝗿/𝗦𝗲𝗲𝗱 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 �𝗶𝗻: ${gearRestock}\n` +
-          `📅 𝗘𝗴𝗴 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 ��_i𝗻: ${eggRestock}`;
+          `🍯 𝗛𝗼𝗻𝗲𝘆 𝗦𝘁𝗼𝗰𝗸:\n${honeyList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${honeyRestock}\n\n` +
+          `🌤️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿: ${weatherText}\n🪴 �_C𝗿𝗼𝗽 𝗕𝗼𝗻𝘂𝘀: ${cropBonus}\n\n` +
+          `📅 𝗚𝗲𝗮𝗿/𝗦𝗲𝗲𝗱 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${gearRestock}\n` +
+          `📅 𝗘𝗴𝗴 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${eggRestock}`;
 
         if (message !== sessionData.lastMessage) {
           sessionData.lastMessage = message;
