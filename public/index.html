@@ -1,1 +1,277 @@
-n
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌿 Grow A Garden Tracker | Alex Bot</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #e0f7e0, #f0f8f0);
+      color: #2a3d2a;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 700px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.8em;
+      color: #4CAF50;
+      margin: 0 0 10px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    .subtitle {
+      font-size: 1.2em;
+      color: #388E3C;
+      margin-bottom: 20px;
+    }
+    .divider {
+      border-top: 3px double #4CAF50;
+      margin: 20px 0;
+    }
+    .stock-section {
+      text-align: left;
+      margin: 20px 0;
+    }
+    .stock-section h2 {
+      font-size: 1.8em;
+      color: #388E3C;
+      margin: 10px 0 5px;
+      display: flex;
+      align-items: center;
+    }
+    .stock-section h2 .emoji {
+      margin-right: 8px;
+      font-size: 1.2em;
+    }
+    .stock-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .stock-list li {
+      font-size: 1.1em;
+      padding: 8px 0;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+    }
+    .stock-list li::before {
+      content: '➤';
+      color: #4CAF50;
+      margin-right: 10px;
+      font-size: 1.2em;
+    }
+    .restock-time {
+      font-size: 0.95em;
+      color: #666;
+      margin-top: 5px;
+    }
+    .loading {
+      font-size: 1.2em;
+      color: #388E3C;
+      margin: 20px 0;
+    }
+    .error {
+      font-size: 1.2em;
+      color: #d32f2f;
+      margin: 20px 0;
+    }
+    .footer {
+      font-size: 0.95em;
+      color: #666;
+      margin-top: 30px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 2.2em;
+      }
+      .stock-section h2 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌿 𝗚𝗿𝗼𝘄 𝗔 𝗚𝗮𝗿𝗱𝗲𝗻 𝗧𝗿𝗮𝗰𝗸𝗲𝗿 🌿</h1>
+    <p class="subtitle">Real-time stock updates powered by Nexus Bot</p>
+    <div class="divider"></div>
+
+    <div class="stock-section">
+      <h2><span class="emoji">🛠️</span>𝗚𝗲𝗮𝗿</h2>
+      <ul class="stock-list" id="gear-list">
+        <li class="loading">Loading gear...</li>
+      </ul>
+      <p class="restock-time" id="gear-restock">Restock: Calculating...</p>
+    </div>
+
+    <div class="stock-section">
+      <h2><span class="emoji">🌱</span>𝗦𝗲𝗲𝗱𝘀</h2>
+      <ul class="stock-list" id="seeds-list">
+        <li class="loading">Loading seeds...</li>
+      </ul>
+      <p class="restock-time" id="seeds-restock">Restock: Calculating...</p>
+    </div>
+
+    <div class="stock-section">
+      <h2><span class="emoji">🥚</span>𝗘𝗴𝗴𝘀</h2>
+      <ul class="stock-list" id="eggs-list">
+        <li class="loading">Loading eggs...</li>
+      </ul>
+      <p class="restock-time" id="eggs-restock">Restock: Calculating...</p>
+    </div>
+
+    <div class="stock-section">
+      <h2><span class="emoji">🎨</span>𝗖𝗼𝘀𝗺𝗲𝘁𝗶𝗰𝘀</h2>
+      <ul class="stock-list" id="cosmetics-list">
+        <li class="loading">Loading cosmetics...</li>
+      </ul>
+      <p class="restock-time" id="cosmetics-restock">Restock: Calculating...</p>
+    </div>
+
+    <div class="stock-section">
+      <h2><span class="emoji">🍯</span>�_H𝗼𝗻𝗲𝘆 𝗦𝘁𝗼𝗰𝗸</h2>
+      <ul class="stock-list" id="honey-list">
+        <li class="loading">Loading honey stock...</li>
+      </ul>
+      <p class="restock-time" id="honey-restock">Restock: Calculating...</p>
+    </div>
+
+    <div class="stock-section">
+      <h2><span class="emoji">🌤️</span>𝗪𝗲𝗮𝘁𝗵𝗲𝗿</h2>
+      <ul class="stock-list" id="weather-list">
+        <li class="loading">Loading weather...</li>
+      </ul>
+    </div>
+
+    <div class="divider"></div>
+    <p class="footer">Powered by <strong>Nexus Bot - Ignition X</strong> | Updated every 10 seconds</p>
+  </div>
+
+  <script>
+    // Utility to convert milliseconds to time string
+    function convertTime(ms) {
+      const seconds = Math.floor(ms / 1000);
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      return `${h > 0 ? `${h}h ` : ""}${m}m ${s}s`;
+    }
+
+    // Calculate honey restock countdown
+    function getHoneyRestockCountdown() {
+      const nowPH = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }));
+      const currentMinutes = nowPH.getMinutes();
+      const currentSeconds = nowPH.getSeconds();
+      const remainingMinutes = 59 - currentMinutes;
+      const remainingSeconds = 60 - currentSeconds;
+      const totalSeconds = remainingMinutes * 60 + remainingSeconds;
+      return convertTime(totalSeconds * 1000);
+    }
+
+    // Normalize string for emoji matching
+    function normalizeString(str) {
+      return str
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    // Fetch and display stock data
+    async function fetchStockData() {
+      try {
+        const [
+          gearSeedRes,
+          eggRes,
+          weatherRes,
+          honeyRes,
+          cosmeticsRes,
+          seedsEmojiRes,
+        ] = await Promise.all([
+          fetch("https://growagardenstock.com/api/stock?type=gear-seeds"),
+          fetch("https://growagardenstock.com/api/stock?type=egg"),
+          fetch("https://growagardenstock.com/api/stock/weather"),
+          fetch("http://65.108.103.151:22377/api/stocks?type=honeyStock"),
+          fetch("https://growagardenstock.com/api/special-stock?type=cosmetics"),
+          fetch("http://65.108.103.151:22377/api/stocks?type=seedsStock"),
+        ].map(p => p.then(res => res.json())));
+
+        // Gear
+        const gearList = document.getElementById("gear-list");
+        gearList.innerHTML = gearSeedRes.gear?.length
+          ? gearSeedRes.gear.map(item => `<li>${item}</li>`).join("")
+          : "<li>No gear available</li>";
+        document.getElementById("gear-restock").textContent = `Restock: ${convertTime((300 - Math.floor((Date.now() - gearSeedRes.updatedAt) / 1000)) * 1000)}`;
+
+        // Seeds with emojis
+        const emojiSeeds = honeyRes.seedsStock || [];
+        const seedsList = document.getElementById("seeds-list");
+        seedsList.innerHTML = gearSeedRes.seeds?.length
+          ? gearSeedRes.seeds.map(seed => {
+              const name = seed.split(" **")[0];
+              const matched = emojiSeeds.find(s => normalizeString(s.name) === normalizeString(name));
+              const emoji = matched?.emoji || "";
+              return `<li>${emoji ? `${emoji} ` : ""}${seed}</li>`;
+            }).join("")
+          : "<li>No seeds available</li>";
+        document.getElementById("seeds-restock").textContent = `Restock: ${convertTime((300 - Math.floor((Date.now() - gearSeedRes.updatedAt) / 1000)) * 1000)}`;
+
+        // Eggs
+        const eggsList = document.getElementById("eggs-list");
+        eggsList.innerHTML = eggRes.egg?.length
+          ? eggRes.egg.map(item => `<li>${item}</li>`).join("")
+          : "<li>No eggs available</li>";
+        document.getElementById("eggs-restock").textContent = `Restock: ${convertTime((600 - Math.floor((Date.now() - eggRes.updatedAt) / 1000)) * 1000)}`;
+
+        // Cosmetics
+        const cosmeticsList = document.getElementById("cosmetics-list");
+        cosmeticsList.innerHTML = cosmeticsRes.cosmetics?.length
+          ? cosmeticsRes.cosmetics.map(item => `<li>${item}</li>`).join("")
+          : "<li>No cosmetics available</li>";
+        document.getElementById("cosmetics-restock").textContent = `Restock: ${convertTime((14400 - Math.floor((Date.now() - cosmeticsRes.updatedAt) / 1000)) * 1000)}`;
+
+        // Honey Stock
+        const honeyList = document.getElementById("honey-list");
+        honeyList.innerHTML = honeyRes.honeyStock?.length
+          ? honeyRes.honeyStock.map(h => `<li>${h.name}: ${h.value}</li>`).join("")
+          : "<li>No honey stock available</li>";
+        document.getElementById("honey-restock").textContent = `Restock: ${getHoneyRestockCountdown()}`;
+
+        // Weather
+        const weatherList = document.getElementById("weather-list");
+        const weatherIcon = weatherRes.icon || "🌦️";
+        const weatherCurrent = weatherRes.currentWeather || "Unknown";
+        const cropBonus = weatherRes.cropBonuses || "None";
+        weatherList.innerHTML = `<li>${weatherIcon} ${weatherCurrent} | Crop Bonus: ${cropBonus}</li>`;
+      } catch (error) {
+        console.error("Error fetching stock data:", error);
+        document.querySelectorAll(".stock-list").forEach(list => {
+          list.innerHTML = `<li class="error">Failed to load data</li>`;
+        });
+        document.querySelectorAll(".restock-time").forEach(el => {
+          el.textContent = "Restock: Error";
+        });
+      }
+    }
+
+    // Initial fetch and refresh every 10 seconds
+    fetchStockData();
+    setInterval(fetchStockData, 10 * 1000);
+  </script>
+</body>
+        </html>
