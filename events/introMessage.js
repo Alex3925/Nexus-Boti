@@ -33,7 +33,7 @@ module.exports = {
                 let userName = user.fullName || "Friend";
                 
                 // Create and send welcome message
-                const welcomeMessage = `Welcome ${userName} to ${threadName}! 👋\n\nI'm Nexus Bot, your helpful assistant. Use "${config?.prefix || '!'}help" to see what I can do!`;
+                const welcomeMessage = `Welcome ${userName} to ${threadName}! 👋\n\nI'm ALEX Bot, your helpful assistant. Use "${config?.prefix || '!'}help" to see what I can do!`;
                 
                 // Send welcome message with slight delay to avoid rate limits
                 setTimeout(() => {
