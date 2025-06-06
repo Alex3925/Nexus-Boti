@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { ensureDbEntities } = require("../nexus-core/dbSync"); // Corrected path
+const { ensureDbEntities } = require("../nexus-core/dbSync"); // Correct path
 
 const activeSessions = new Map();
 
@@ -17,7 +17,7 @@ module.exports = {
       await ensureDbEntities(api, event);
     } catch (error) {
       console.error(`❌ Failed to sync database for user ${event.senderID}:`, error.message);
-      api.sendMessage("⚠️ Error initializing database. Tracking may still work.", event.threadID);
+      api.sendMessage("⚠️ 𝗘𝗿𝗿𝗼𝗿 𝗶𝗻𝗶𝘁𝗶𝗮𝗹𝗶𝘇𝗶𝗻𝗴 𝗱𝗮𝘁𝗮𝗯𝗮𝘀𝗲. 𝗧𝗿𝗮𝗰𝗸𝗶𝗻𝗴 𝗺𝗮𝘆 𝘀𝘁𝗶𝗹𝗹 𝘄𝗼𝗿𝗸.", event.threadID);
     }
 
     const action = event.body.split(" ")[1]?.toLowerCase();
@@ -29,28 +29,30 @@ module.exports = {
       if (session) {
         clearInterval(session.interval);
         activeSessions.delete(senderID);
-        return api.sendMessage("🛑 Gagstock tracking stopped.", threadID);
+        return api.sendMessage("🛑 𝗚𝗮𝗴𝘀𝘁𝗼𝗰𝗸 𝗧𝗿𝗮𝗰𝗸𝗶𝗻𝗴 𝗦𝘁𝗼𝗽𝗽𝗲𝗱 🌱", threadID);
       } else {
-        return api.sendMessage("⚠️ You don't have an active gagstock session.", threadID);
+        return api.sendMessage("⚠️ 𝗡𝗼 𝗔𝗰𝘁𝗶𝘃𝗲 𝗚𝗮𝗴𝘀𝘁𝗼𝗰𝗸 𝗦𝗲𝘀𝘀𝗶𝗼𝗻 𝗙𝗼𝘂𝗻𝗱", threadID);
       }
     }
 
     if (action !== "on") {
       return api.sendMessage(
-        "📌 Usage:\n• `{prefix}gagstock on` to start tracking\n• `{prefix}gagstock off` to stop tracking",
+        "📌 𝗨𝘀𝗮𝗴𝗲 𝗚𝘂𝗶𝗱𝗲\n" +
+        "➤ `{prefix}gagstock on` 𝘁𝗼 𝘀𝘁𝗮𝗿𝘁 𝘁𝗿𝗮𝗰𝗸𝗶𝗻𝗴\n" +
+        "➤ `{prefix}gagstock off` 𝘁𝗼 𝘀𝘁𝗼𝗽 𝘁𝗿𝗮𝗰𝗸𝗶𝗻𝗴",
         threadID
       );
     }
 
     if (activeSessions.has(senderID)) {
       return api.sendMessage(
-        "📡 You're already tracking Gagstock. Use `{prefix}gagstock off` to stop.",
+        "📡 𝗔𝗹𝗿𝗲𝗮𝗱𝘆 𝗧𝗿𝗮𝗰𝗸𝗶𝗻𝗴 𝗚𝗮𝗴𝘀𝘁𝗼𝗰𝗸! 𝗨𝘀𝗲 `{prefix}gagstock off` 𝘁𝗼 𝘀𝘁𝗼𝗽.",
         threadID
       );
     }
 
     api.sendMessage(
-      "✅ Gagstock tracking started! You'll be notified when stock, weather, or cosmetics change.",
+      "✅ �_G𝗮𝗴𝘀𝘁𝗼𝗰𝗸 𝗧𝗿𝗮𝗰𝗸𝗶𝗻𝗴 𝗦𝘁𝗮𝗿𝘁𝗲𝗱! 🌟 𝗡𝗼𝘁𝗶𝗳𝗶𝗰𝗮𝘁𝗶𝗼𝗻𝘀 𝗳𝗼𝗿 𝘀𝘁𝗼𝗰𝗸, 𝘄𝗲𝗮𝘁𝗵𝗲𝗿, 𝗮𝗻𝗱 𝗰𝗼𝘀𝗺𝗲𝘁𝗶𝗰 𝘂𝗽𝗱𝗮𝘁𝗲𝘀.",
       threadID
     );
 
@@ -128,31 +130,34 @@ module.exports = {
         const cosmeticsRestock = convertTime((14400 - Math.floor((Date.now() - cosmetics.updatedAt) / 1000)) * 1000);
         const honeyRestock = getHoneyRestockCountdown();
 
-        const gearList = gearSeed.gear?.map((item) => `- ${item}`).join("\n") || "No gear.";
+        const gearList = gearSeed.gear?.map((item) => `  ➤ ${item}`).join("\n") || "  ➤ No gear available";
         const seedList = gearSeed.seeds?.map((seed) => {
           const name = seed.split(" **")[0];
           const matched = emojiSeeds.find((s) => normalizeString(s.name) === normalizeString(name));
           const emoji = matched?.emoji || "";
-          return `- ${emoji ? `${emoji} ` : ""}${seed}`;
-        }).join("\n") || "No seeds.";
-        const eggList = egg.egg?.map((item) => `- ${item}`).join("\n") || "No eggs.";
-        const cosmeticsList = cosmetics.cosmetics?.map((item) => `- ${item}`).join("\n") || "No cosmetics.";
-        const honeyList = honey.honeyStock?.map((h) => `- ${h.name}: ${h.value}`).join("\n") || "No honey stock.";
+          return `  ➤ ${emoji ? `${emoji} ` : ""}${seed}`;
+        }).join("\n") || "  ➤ No seeds available";
+        const eggList = egg.egg?.map((item) => `  ➤ ${item}`).join("\n") || "  ➤ No eggs available";
+        const cosmeticsList = cosmetics.cosmetics?.map((item) => `  ➤ ${item}`).join("\n") || "  ➤ No cosmetics available";
+        const honeyList = honey.honeyStock?.map((h) => `  ➤ ${h.name}: ${h.value}`).join("\n") || "  ➤ No honey stock available";
 
         const weatherIcon = weather.icon || "🌦️";
         const weatherCurrent = weather.currentWeather || "Unknown";
         const cropBonus = weather.cropBonuses || "None";
         const weatherText = `${weatherIcon} ${weatherCurrent}`;
 
-        const message = `🌾 𝗚𝗿𝗼𝘄 𝗔 𝗚𝗮𝗿𝗱𝗲𝗻 — 𝗧�_r𝗮𝗰𝗸𝗲𝗿\n\n` +
-          `🛠️ 𝗚𝗲𝗮𝗿:\n${gearList}\n\n` +
-          `🌱 𝗦𝗲𝗲�_d Ascendancyd𝘀:\n${seedList}\n\n` +
-          `🥚 𝗘𝗴𝗴𝘀:\n${eggList}\n\n` +
-          `🎨 𝗖𝗼𝘀𝗺𝗲𝘁𝗶𝗰𝘀:\n${cosmeticsList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${cosmeticsRestock}\n\n` +
-          `🍯 �_H𝗼𝗻𝗲𝘆 𝗦𝘁𝗼𝗰𝗸:\n${honeyList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${honeyRestock}\n\n` +
-          `🌤️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿: ${weatherText}\n🪴 𝗖𝗿𝗼𝗽 𝗕𝗼𝗻𝘂𝘀: ${cropBonus}\n\n` +
-          `📅 𝗚𝗲𝗮𝗿/𝗦𝗲𝗲𝗱 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${gearRestock}\n` +
-          `📅 𝗘𝗴𝗴 𝗿𝗲𝘀𝘁𝗼𝗰𝗸 𝗶𝗻: ${eggRestock}`;
+        const message =
+          `🌿 𝗚𝗿𝗼𝘄 𝗔 𝗚𝗮𝗿𝗱𝗲𝗻 𝗧𝗿𝗮𝗰𝗸𝗲𝗿 🌿\n` +
+          `═══════════════════════\n\n` +
+          `🛠️ 𝗚𝗲𝗮𝗿\n${gearList}\n\n` +
+          `🌱 𝗦𝗲𝗲𝗱𝘀\n${seedList}\n\n` +
+          `🥚 𝗘𝗴𝗴𝘀\n${eggList}\n\n` +
+          `🎨 𝗖𝗼𝘀𝗺𝗲𝘁𝗶𝗰𝘀\n${cosmeticsList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸: ${cosmeticsRestock}\n\n` +
+          `🍯 �_H𝗼𝗻𝗲𝘆 𝗦𝘁𝗼𝗰𝗸\n${honeyList}\n⏳ 𝗥𝗲𝘀𝘁𝗼𝗰𝗸: ${honeyRestock}\n\n` +
+          `🌤️ 𝗪𝗲𝗮𝘁𝗵𝗲𝗿\n${weatherText}\n🪴 𝗖𝗿𝗼𝗽 𝗕𝗼𝗻𝘂𝘀: ${cropBonus}\n\n` +
+          `📅 𝗚𝗲𝗮𝗿/𝗦𝗲𝗲𝗱 𝗥𝗲𝘀𝘁𝗼𝗰𝗸: ${gearRestock}\n` +
+          `📅 𝗘𝗴𝗴 𝗥𝗲𝘀𝘁𝗼𝗰𝗸: ${eggRestock}\n` +
+          `═══════════════════════`;
 
         if (message !== sessionData.lastMessage) {
           sessionData.lastMessage = message;
